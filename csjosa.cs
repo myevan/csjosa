@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
@@ -37,7 +37,8 @@ namespace Myevan
                     if (josaMatch.Index > 0)
                     {
                         var prevChar = src[josaMatch.Index - 1];
-                        if (HasJong(prevChar))
+                        if ((HasJong(prevChar) && josaMatch.Value != "(으)로") || 
+                            (HasJongExceptRieul(prevChar) && josaMatch.Value == "(으)로"))
                         {
                             strBuilder.Append(josaPair.josa1);
                         }
@@ -65,10 +66,7 @@ namespace Myevan
                     int jongCode = localCode % 28;
                     if (jongCode > 0)
                     {
-                        if (jongCode == 8) // ㄹ 종성 예외 처리
-                            return false;
-                        else
-                            return true;
+                        return true;
                     }
                     else
                     {
@@ -81,7 +79,28 @@ namespace Myevan
                 }
             }
 
-            Regex _josaRegex = new Regex(@"\(이\)가|\(와\)과|\(을\)를|\(은\)는|\(으\)로");
+            static bool HasJongExceptRieul(char inChar)
+            {
+                if (inChar >= 0xAC00 && inChar <= 0xD7A3)
+                {
+                    int localCode = inChar - 0xAC00;
+                    int jongCode = localCode % 28;
+                    if (jongCode == 8 || jongCode == 0)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            Regex _josaRegex = new Regex(@"\(이\)가|\(와\)과|\(을\)를|\(은\)는|\(아\)야|\(이\)여|\(으\)로|\(이\)라고");
 
             Dictionary<string, JosaPair> _josaPatternPaird = new Dictionary<string, JosaPair>
             {
@@ -89,7 +108,10 @@ namespace Myevan
                 { "(와)과", new JosaPair("과", "와") },
                 { "(을)를", new JosaPair("을", "를") },
                 { "(은)는", new JosaPair("은", "는") },
+                { "(아)야", new JosaPair("아", "야") },
+                { "(이)여", new JosaPair("이여", "여") },
                 { "(으)로", new JosaPair("으로", "로") },
+                { "(이)라고", new JosaPair("이라고", "라고") },
             };
 
         }
