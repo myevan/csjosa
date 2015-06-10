@@ -100,7 +100,7 @@ namespace Myevan
                 }
             }
 
-            Regex _josaRegex = new Regex(@"\(이\)가|\(와\)과|\(을\)를|\(은\)는|\(아\)야|\(이\)여|\(으\)로|\(이\)라고");
+            Regex _josaRegex = new Regex(@"\(이\)가|\(와\)과|\(을\)를|\(은\)는|\(아\)야|\(이\)여|\(으\)로|\(이\)라");
 
             Dictionary<string, JosaPair> _josaPatternPaird = new Dictionary<string, JosaPair>
             {
@@ -111,7 +111,7 @@ namespace Myevan
                 { "(아)야", new JosaPair("아", "야") },
                 { "(이)여", new JosaPair("이여", "여") },
                 { "(으)로", new JosaPair("으로", "로") },
-                { "(이)라고", new JosaPair("이라고", "라고") },
+                { "(이)라", new JosaPair("이라", "라") },
             };
 
         }

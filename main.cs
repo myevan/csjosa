@@ -14,6 +14,8 @@ namespace Myevan
             Console.WriteLine(Korean.ReplaceJosa("진우(이)여, 닥쳐라. 경렬(이)여, 이리 오라. 상현(이)여, 아무 일도 아니다."));
             Console.WriteLine(Korean.ReplaceJosa("부두(으)로 가야 해. 대궐(으)로 가거나. 집(으)로 갈래?"));
             Console.WriteLine(Korean.ReplaceJosa("나(이)라고 어쩔 수 있겠니? 별(이)라고 불러줘. 라면(이)라고 했잖아."));
+            Console.WriteLine(Korean.ReplaceJosa("라면(이)라면 어떨까? 밥(이)라능~"));
+            Console.WriteLine(Korean.ReplaceJosa("너(이)라면 어떨까? 나(이)라능~"));
             Console.ReadKey();
         }
     }
