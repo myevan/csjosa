@@ -8,9 +8,7 @@ import java.util.regex.Pattern;
  */
 public class Josa {
 
-    String josaRegex = "(이)가|(와)과|(을)를|(은)는|(아)야|(이)여|(으)로|(이)라";
-
-    Map<String, JosaPair> josaPatternPaird = new HashMap<>();
+    private Map<String, JosaPair> josaPatternPaird = new HashMap<>();
 
     public Josa() {
         josaPatternPaird.put("(이)가", new JosaPair("이", "가"));
@@ -23,80 +21,52 @@ public class Josa {
         josaPatternPaird.put("(이)라", new JosaPair("이라", "라"));
     }
 
-
     public String replace(String src) {
         StringBuilder stringBuilder = new StringBuilder();
-        Pattern pattern = Pattern.compile(josaRegex);
+        Pattern pattern = Pattern.compile("\\(이\\)가|\\(와\\)과|\\(을\\)를|\\(은\\)는|\\(아\\)야|\\(이\\)여|\\(으\\)로|\\(이\\)라");
         Matcher matcher = pattern.matcher(src);
         int lastHeadIndex = 0;
 
-        for (int i = 1; i < matcher.groupCount(); i++) {
-            String group = matcher.group(i);
+        while (matcher.find()) {
+            String group = matcher.group();
             JosaPair josaPair = josaPatternPaird.get(group);
+            int endIndexOfBefore = matcher.end();
+            String before = src.substring(lastHeadIndex, endIndexOfBefore);
 
-            //stringBuilder.append()
-        }
+            stringBuilder.append(before.replace(group, ""));
 
-        /*var josaMatches = _josaRegex.Matches(src);
-        var lastHeadIndex = 0;
-        for (Match josaMatch in josaMatches)
-        {
-            var josaPair = _josaPatternPaird[josaMatch.Value];
-
-            strBuilder.Append(src, lastHeadIndex, josaMatch.Index - lastHeadIndex);
-            if (josaMatch.Index > 0)
-            {
-                var prevChar = src[josaMatch.Index - 1];
-                if ((HasJong(prevChar) && josaMatch.Value != "(으)로") ||
-                        (HasJongExceptRieul(prevChar) && josaMatch.Value == "(으)로"))
-                {
-                    strBuilder.Append(josaPair.josa1);
-                }
-                else
-                {
-                    strBuilder.Append(josaPair.josa2);
+            String josa = josaPair.getJosa1();
+            if (matcher.start() > 0) {
+                char prevChar = src.substring(matcher.start() - 1, endIndexOfBefore).charAt(0);
+                if (!((hasJong(prevChar) && !group.equals("(으)로")) ||
+                        (hasJongExceptRieul(prevChar) && group.equals("(으)로")))) {
+                    josa = josaPair.getJosa2();
                 }
             }
-            else
-            {
-                strBuilder.Append(josaPair.josa1);
-            }
-
-            lastHeadIndex = josaMatch.Index + josaMatch.Length;
+            stringBuilder.append(josa);
+            lastHeadIndex = endIndexOfBefore;
         }
-        strBuilder.Append(src, lastHeadIndex, src.Length - lastHeadIndex);*/
+        stringBuilder.append(src.substring(lastHeadIndex, src.length()));
         return stringBuilder.toString();
     }
 
-    public boolean hasJong(char inChar) {
+    private boolean hasJong(char inChar) {
         // 가 ~ 힣
         if (inChar >= 0xAC00 && inChar <= 0xD7A3) {
             int localCode = inChar - 0xAC00; // 가~ 이후 로컬 코드
             int jongCode = localCode % 28;
-            if (jongCode > 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+            return jongCode > 0;
         }
+        return false;
     }
 
-    public boolean HasJongExceptRieul(char inChar) {
+    private boolean hasJongExceptRieul(char inChar) {
         if (inChar >= 0xAC00 && inChar <= 0xD7A3) {
             int localCode = inChar - 0xAC00;
             int jongCode = localCode % 28;
-            if (jongCode == 8 || jongCode == 0) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return false;
+            return !(jongCode == 8 || jongCode == 0);
         }
+        return false;
     }
-
-
 
 }
